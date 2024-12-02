@@ -14,7 +14,7 @@
    
    ```bash
    nnUNet_results=nnUNet_results \
-   nnUNetv2_predict \
+   nnUNetv2_infer \
    -i input_folder \
    -o output_folder \
    -d dataset_id \
