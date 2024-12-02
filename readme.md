@@ -1,9 +1,26 @@
-# pre-trained weights
-I used this powerful net to segment Ecg images and you can download the pretrained weights
-[here](https://drive.google.com/file/d/1-sc9GhTFnDC_uGKzo1td6oMzIl095S_R/view?usp=sharing).
+# Pre-trained weights
+1) I used this powerful net to segment Ecg images. To get started, simply clone this repo:
 
-After that, simple move the model to your nnUNet_results folder and unzip it there. 
-I created an infer.py code and you can use the net with pretrained weights now!
+   ```bash
+   git clone https://github.com/duongphamminhdung/nnUNet.git
+   cd nnUNet
+   pip install -e .
+   ```
+2) Download the pretrained weights
+[here](https://drive.google.com/file/d/1-sc9GhTFnDC_uGKzo1td6oMzIl095S_R/view?usp=sharing) (The dataset id that I used was 256, you can use this in **inference**).
+
+3) Move the model to your `nnUNet_results` folder and unzip it there. 
+5) Run **inference**:
+   
+   ```bash
+   nnUNet_results=nnUNet_results \
+   nnUNetv2_predict \
+   -i input_folder \
+   -o output_folder \
+   -d dataset_id \
+   -c 2d \
+   -f all
+   ```
 
 # Welcome to the new nnU-Net!
 
