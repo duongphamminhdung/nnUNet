@@ -212,7 +212,7 @@ def run_training(dataset_name_or_id: Union[str, int],
 
         if val_with_best:
             nnunet_trainer.load_checkpoint(join(nnunet_trainer.output_folder, 'checkpoint_best.pth'))
-        nnunet_trainer.perform_actual_validation(export_validation_probabilities)
+        # nnunet_trainer.perform_actual_validation(export_validation_probabilities)
 
 
 def run_training_entry():
@@ -257,7 +257,7 @@ def run_training_entry():
                          "(GPU), 'cpu' (CPU) and 'mps' (Apple M1/M2). Do NOT use this to set which GPU ID! "
                          "Use CUDA_VISIBLE_DEVICES=X nnUNetv2_train [...] instead!")
     args = parser.parse_args()
-
+    
     assert args.device in ['cpu', 'cuda', 'mps'], f'-device must be either cpu, mps or cuda. Other devices are not tested/supported. Got: {args.device}.'
     if args.device == 'cpu':
         # let's allow torch to use hella threads

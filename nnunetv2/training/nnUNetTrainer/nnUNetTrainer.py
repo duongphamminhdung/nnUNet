@@ -71,7 +71,7 @@ from nnunetv2.utilities.plans_handling.plans_handler import PlansManager
 
 class nnUNetTrainer(object):
     def __init__(self, plans: dict, configuration: str, fold: int, dataset_json: dict, unpack_dataset: bool = True,
-                 device: torch.device = torch.device('cuda')):
+                 device: torch.device = torch.device('cuda'), num_epochs: int = 50):
         # From https://grugbrain.dev/. Worth a read ya big brains ;-)
 
         # apex predator of grug is complexity
@@ -149,10 +149,9 @@ class nnUNetTrainer(object):
         self.oversample_foreground_percent = 0.33
         self.num_iterations_per_epoch = 250
         self.num_val_iterations_per_epoch = 50
-        self.num_epochs = 1000
+        self.num_epochs = num_epochs
         self.current_epoch = 0
         self.enable_deep_supervision = True
-
         ### Dealing with labels/regions
         self.label_manager = self.plans_manager.get_label_manager(dataset_json)
         # labels can either be a list of int (regular training) or a list of tuples of int (region-based training)
@@ -185,7 +184,7 @@ class nnUNetTrainer(object):
         # self.configure_rotation_dummyDA_mirroring_and_inital_patch_size and will be saved in checkpoints
 
         ### checkpoint saving stuff
-        self.save_every = 50
+        self.save_every = 5
         self.disable_checkpointing = False
 
         ## DDP batch size and oversampling can differ between workers and needs adaptation
@@ -898,6 +897,7 @@ class nnUNetTrainer(object):
         mod.decoder.deep_supervision = enabled
 
     def on_train_start(self):
+        self.print_to_log_file("Start training")
         # dataloaders must be instantiated here (instead of __init__) because they need access to the training data
         # which may not be present  when doing inference
         self.dataloader_train, self.dataloader_val = self.get_dataloaders()
@@ -978,23 +978,27 @@ class nnUNetTrainer(object):
     def train_step(self, batch: dict) -> dict:
         data = batch['data']
         target = batch['target']
-
+        # print("Load data from batch", end = ' ')
         data = data.to(self.device, non_blocking=True)
         if isinstance(target, list):
             target = [i.to(self.device, non_blocking=True) for i in target]
         else:
             target = target.to(self.device, non_blocking=True)
+        # print("Data to device", end = ' ')
 
         self.optimizer.zero_grad(set_to_none=True)
+        # print("Zero grad", end = ' ')
+
         # Autocast can be annoying
         # If the device_type is 'cpu' then it's slow as heck and needs to be disabled.
         # If the device_type is 'mps' then it will complain that mps is not implemented, even if enabled=False is set. Whyyyyyyy. (this is why we don't make use of enabled=False)
         # So autocast will only be active if we have a cuda device.
         with autocast(self.device.type, enabled=True) if self.device.type == 'cuda' else dummy_context():
             output = self.network(data)
+            # print("input data into model", end = ' ')
             # del data
             l = self.loss(output, target)
-
+            
         if self.grad_scaler is not None:
             self.grad_scaler.scale(l).backward()
             self.grad_scaler.unscale_(self.optimizer)
@@ -1005,6 +1009,8 @@ class nnUNetTrainer(object):
             l.backward()
             torch.nn.utils.clip_grad_norm_(self.network.parameters(), 12)
             self.optimizer.step()
+        # print(f"backward and step")
+
         return {'loss': l.detach().cpu().numpy()}
 
     def on_train_epoch_end(self, train_outputs: List[dict]):
