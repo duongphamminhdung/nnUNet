@@ -7,7 +7,7 @@
    pip install -e .
    ```
 2) Download the pretrained weights
-[here](https://drive.google.com/file/d/1-sc9GhTFnDC_uGKzo1td6oMzIl095S_R/view?usp=sharing) (The dataset id that I used was 256, you can use this in **inference**).
+[here](https://drive.google.com/file/d/1prKxnRBIa6n0MnwkYvN_OhQqtRzZRsbi/view?usp=sharing) (The dataset id that I used was 256, you can use this in **inference**).
 
 3) Move the model to your `nnUNet_results` folder and unzip it there. 
 5) Run **inference**:
