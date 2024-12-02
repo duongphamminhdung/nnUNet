@@ -1,3 +1,10 @@
+# pre-trained weights
+I used this powerful net to segment Ecg images and you can download the pretrained weights
+[here](https://drive.google.com/file/d/1-sc9GhTFnDC_uGKzo1td6oMzIl095S_R/view?usp=sharing).
+
+After that, simple move the model to your nnUNet_results folder and unzip it there. 
+I created an infer.py code and you can use the net with pretrained weights now!
+
 # Welcome to the new nnU-Net!
 
 Click [here](https://github.com/MIC-DKFZ/nnUNet/tree/nnunetv1) if you were looking for the old one instead.
