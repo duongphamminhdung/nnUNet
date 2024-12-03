@@ -113,4 +113,6 @@ ENV/
 
 *.model
 
+results
+
 !documentation/assets/scribble_example.png
