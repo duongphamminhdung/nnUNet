@@ -111,7 +111,7 @@ def infer():
                                 perform_everything_on_device=True,
                                 device=device,
                                 verbose=args.verbose,
-                                allow_tqdm=not args.disable_progress_bar,
+                                allow_tqdm=True,
                                 verbose_preprocessing=args.verbose)
     predictor.initialize_from_trained_model_folder(args.m, args.f, args.chk)
     predictor.predict_from_files(args.i, args.o, save_probabilities=args.save_probabilities,
